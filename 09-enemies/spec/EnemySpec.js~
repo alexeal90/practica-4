@@ -92,6 +92,7 @@ describe("Enemy", function(){
 		};
 		var aux = {};
 		enemyAux = board.add(new Enemy(enemies.basic));
+		board.add(new Enemy(enemies.basic, { x: 200 }));
 		
 		spyOn(SpriteSheet, 'draw');
 		enemyAux.draw(aux);
