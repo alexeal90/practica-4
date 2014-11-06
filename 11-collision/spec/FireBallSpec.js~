@@ -24,6 +24,6 @@ describe("FireBall", function(){
 		
 			Game = {keys: {'n': true}};
 			board.step(3.5);
-			expect(board.objects.length).toBe(1);
+			expect(board.objects.length).toBe(2);
 	});
 });
