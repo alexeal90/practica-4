@@ -56,3 +56,144 @@
     colisionado con objetos de cierto tipo, no con todos los objetos.
 
 */
+
+describe("GameBoard", function(){
+   
+   var canvas, ctx;
+	var board;
+	
+   beforeEach(function(){
+       
+       loadFixtures('index.html');
+
+       canvas = $('#game')[0];
+       expect(canvas).toExist();
+
+       ctx = canvas.getContext('2d');
+       expect(ctx).toBeDefined();
+       board = new GameBoard();
+   });
+
+   it("Añade objetos", function(){
+       var objAux= {};
+       board.add(objAux);
+       expect(board.objects[0]).toBe(objAux);
+   	 expect(objAux.board).toBe(board);
+   });
+   
+   it("Borra objetos", function(){
+   	 var objAux= {};
+   	 
+   	 spyOn(board, 'remove').andCallThrough();
+   	 spyOn(board, 'resetRemoved').andCallThrough();
+   	 spyOn(board, 'finalizeRemoved').andCallThrough();
+   	 
+   	 board.add(objAux);
+   	 board.resetRemoved();
+   	 board.remove(objAux);
+   	 
+   	 expect(board.removed[0]).toBe(objAux);
+   	 expect(board.removed.length).toBe(1);
+   	 expect(board.resetRemoved).toHaveBeenCalled();
+   	 
+   	 board.finalizeRemoved();
+   	 board.resetRemoved();
+   	 expect(board.objects.length).toBe(0);
+   	 expect(board.removed.length).toBe(0);
+   	 expect(board.finalizeRemoved).toHaveBeenCalled();
+   });
+   
+	it("Prueba iteracion", function(){
+   	 var objAux = {
+   	 	drawAux: function(){},
+   	 	stepAux: function(){}
+   	 };
+   	 
+   	 var objAux2 = {
+   	 	drawAux: function(){},
+   	 	stepAux: function(){}
+   	 };
+   	 
+   	 board.add(objAux);
+   	 board.add(objAux2);
+   	 
+   	 spyOn(board.objects[0], 'drawAux');
+   	 spyOn(board.objects[1], 'stepAux');
+   	 
+   	 board.iterate('drawAux');
+   	 board.iterate('stepAux', 3);
+   	 
+   	 expect(board.objects[0].drawAux).toHaveBeenCalled();
+   	 expect(board.objects[1].stepAux).toHaveBeenCalledWith(3);
+   });
+   
+   it("Prueba detect", function(){
+   	 
+   	 function decisor () {
+			return this.p === 1;
+   	 };
+   	 
+   	 var objAux = {
+   	 	p: 0
+   	 };
+   	 
+   	 var objAux2 = {
+   	 	p: 1
+   	 };
+   	 
+   	 board.add(objAux);
+   	 board.add(objAux2);
+   	 
+   	 var resultado = board.detect(decisor);
+   	 
+   	 expect(resultado).toEqual(objAux2);
+   });
+   
+   it("Prueba draw", function(){
+   	 spyOn(board, 'iterate');
+   	 
+   	 board.draw();
+   	 
+   	 expect(board.iterate).toHaveBeenCalled();
+   });
+   
+   it("Prueba step", function(){
+   	 spyOn(board, 'resetRemoved');
+   	 spyOn(board, 'iterate');
+   	 spyOn(board, 'finalizeRemoved');
+   	 
+   	 board.step();
+   	 
+   	 expect(board.resetRemoved).toHaveBeenCalled();
+   	 expect(board.iterate).toHaveBeenCalled();
+   	 expect(board.finalizeRemoved).toHaveBeenCalled();
+   });
+   
+   it("Existe interseccion", function(){
+   	 
+   	 var objRef = {x:0, y:0, w:5, h:10};
+   	 var objCercano = {x:0, y:2, w:10, h:10};
+   	 var objLejano = {x:20, y:20, w:5, h:5};
+   	 
+   	 expect(board.overlap(objRef,objCercano)).toBeTruthy();
+   	 expect(board.overlap(objRef,objLejano)).toBeFalsy();
+  	});
+   	 
+   it("Hay colision", function(){
+   	 
+   	 var objRef = {x:0, y:0, w:5, h:10, type: 0};
+   	 var objCercano = {x:0, y:2, w:10, h:10, type: 1};
+   	 var objLejano = {x:20, y:20, w:5, h:5, type: 2};
+   	 
+   	 // se añaden a tablero porque se usa collide, que a su vez usa detect, que a su ves usa la lista de objetos
+   	 board.add(objRef); 
+   	 board.add(objCercano);
+   	 board.add(objLejano);
+   	 
+   	 expect(board.collide(objRef,objCercano.type)).toBe(objCercano);
+   	 expect(board.collide(objRef,objLejano)).toEqual(false);
+  	});
+   		 
+   	 
+});
+

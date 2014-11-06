@@ -1,14 +1,20 @@
 var sprites = {
     ship: { sx: 0, sy: 0, w: 37, h: 42, frames: 1 },
     missile: { sx: 0, sy: 30, w: 2, h: 10, frames: 1 },
-    enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 }
+    enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 },
+    enemy_bee: { sx: 79, sy: 0, w: 37, h: 43, frames: 1 },
+    enemy_ship: { sx: 116, sy: 0, w: 42, h: 43, frames: 1 },
+    enemy_circle: { sx: 158, sy: 0, w: 32, h: 33, frames: 1 },
+    explosion: { sx: 0, sy: 64, w: 64, h: 64, frames: 12 }
 };
+
 
 var enemies = {
     // B, C y E substituirán a los valores por defecto definidos en la
     // variable baseParameters del constructor Enemy(). Ver
     // comentarios en el código del constructor al final del fichero.
-    basic: { x: 100, y: -50, sprite: 'enemy_purple', B: 100, C: 4, E: 100 }
+    basic: { x: 100, y: -50, sprite: 'enemy_purple', B: 100, C: 2 , E: 100 }
+
 };
 
 
@@ -36,6 +42,7 @@ var playGame = function() {
     board.add(new PlayerShip());
     Game.setBoard(3,board);
 }
+
 
 
 // Si se construye con clear==true no se pintan estrellas con fondo
@@ -113,66 +120,130 @@ var Starfield = function(speed,opacity,numStars,clear) {
 // La clase PlayerShip tambien ofrece la interfaz step(), draw() para
 // poder ser dibujada desde el bucle principal del juego
 var PlayerShip = function() { 
-    this.setup('ship', { vx: 0, reloadTime: 0.25, maxVel: 200 });
-
-    this.reload = this.reloadTime;
+    this.w =  SpriteSheet.map['ship'].w;
+    this.h =  SpriteSheet.map['ship'].h;
     this.x = Game.width/2 - this.w / 2;
     this.y = Game.height - 10 - this.h;
+    this.vx = 0;
+
+    this.reloadTime = 0.25;  // Un cuarto de segundo para poder volver a disparar
+    this.reload = this.reloadTime;
+
+    this.maxVel = 200;
 
     this.step = function(dt) {
-	if(Game.keys['left']) { this.vx = -this.maxVel; }
-	else if(Game.keys['right']) { this.vx = this.maxVel; }
-	else { this.vx = 0; }
+		if(Game.keys['left']) { this.vx = -this.maxVel; }
+		else if(Game.keys['right']) { this.vx = this.maxVel; }
+		else { this.vx = 0; }
 
-	this.x += this.vx * dt;
+		this.x += this.vx * dt;
 
-	if(this.x < 0) { this.x = 0; }
-	else if(this.x > Game.width - this.w) { 
-	    this.x = Game.width - this.w 
-	}
+		if(this.x < 0) { this.x = 0; }
+		else if(this.x > Game.width - this.w) { 
+			 this.x = Game.width - this.w 
+		}
 
-	this.reload-=dt;
-	if(Game.keys['fire'] && this.reload < 0) {
+		this.reload-=dt;
+		if(Game.keys['fire'] && this.reload < 0) {
+			 // Esta pulsada la tecla de disparo y ya ha pasado el tiempo reload
+			 Game.keys['fire'] = false;
+			 this.reload = this.reloadTime;
+
+			 // Se añaden al gameboard 2 misiles 
+			 this.board.add(new PlayerMissile(this.x,this.y+this.h/2));
+			 this.board.add(new PlayerMissile(this.x+this.w,this.y+this.h/2));
+		}
+		if(Game.keys['n'] && this.reload < 0) {
 	    // Esta pulsada la tecla de disparo y ya ha pasado el tiempo reload
-	    Game.keys['fire'] = false;
+	    Game.keys['n'] = false;
 	    this.reload = this.reloadTime;
-
-	    // Se añaden al gameboard 2 misiles 
-	    this.board.add(new PlayerMissile(this.x,this.y+this.h/2));
-	    this.board.add(new PlayerMissile(this.x+this.w,this.y+this.h/2));
+	    this.board.add(new PlayerFireN(this.x+this.w,this.y+this.h/2));
 	}
+
+	if(Game.keys['b'] && this.reload < 0) {
+	    // Esta pulsada la tecla de disparo y ya ha pasado el tiempo reload
+	    Game.keys['b'] = false;
+	    this.reload = this.reloadTime;
+	    this.board.add(new PlayerFireB(this.x+this.w,this.y+this.h/2));
+	}
+   }
+
+    this.draw = function(ctx) {
+	SpriteSheet.draw(ctx,'ship',this.x,this.y,0);
     }
 }
 
-// Heredamos del prototipo new Sprite()
-PlayerShip.prototype = new Sprite();
-
-
-
-
-// Constructor para los misiles.
+// Constructor los misiles.
 // Los metodos de esta clase los añadimos a su prototipo. De esta
 // forma solo existe una copia de cada uno para todos los misiles, y
 // no una copia para cada objeto misil
 var PlayerMissile = function(x,y) {
-    this.setup('missile',{ vy: -700 });
-    this.x = x + this.w/2;
-    this.y = y + this.h; 
-};
+    this.w = SpriteSheet.map['missile'].w;
+    this.h = SpriteSheet.map['missile'].h;
+    this.x = x - this.w/2; 
 
-PlayerMissile.prototype = new Sprite();
+    this.y = y - this.h; 
+    this.vy = -700;
+};
 
 PlayerMissile.prototype.step = function(dt)  {
     this.y += this.vy * dt;
     if(this.y < -this.h) { this.board.remove(this); }
 };
 
+PlayerMissile.prototype.draw = function(ctx)  {
+    SpriteSheet.draw(ctx,'missile',this.x,this.y);
+};
+
+var PlayerFireN = function(x,y) {
+    this.w = SpriteSheet.map['explosion'].w;
+    this.h = SpriteSheet.map['explosion'].h;
+    this.x = x - this.w/2; 
+
+    this.y = y - this.h; 
+    this.vy = -1100;
+    this.vx = -150;
+};
+
+PlayerFireN.prototype.step = function(dt)  {
+    this.x += this.vx * -dt;
+    this.y += this.vy * dt;
+    this.vy=this.vy+100;
+    if(this.y < -this.h) { this.board.remove(this); }
+    if(this.x < -this.w) { this.board.remove(this); }
+};
+
+PlayerFireN.prototype.draw = function(ctx)  {
+    SpriteSheet.draw(ctx,'explosion',this.x,this.y);
+};
+
+var PlayerFireB = function(x,y) {
+    this.w = SpriteSheet.map['explosion'].w;
+    this.h = SpriteSheet.map['explosion'].h;
+    this.x = x - this.w; 
+
+    this.y = y - this.h; 
+    this.vy = -1100;
+    this.vx = -150;
+};
+
+PlayerFireB.prototype.step = function(dt)  {
+    this.x += this.vx * dt;
+    this.y += this.vy * dt;
+    this.vy=this.vy+100;
+    if(this.y < -this.h) { this.board.remove(this); }
+    if(this.x < -this.w) { this.board.remove(this); }
+};
+
+PlayerFireB.prototype.draw = function(ctx)  {
+    SpriteSheet.draw(ctx,'explosion',this.x,this.y);
+};
 
 
 // Constructor para las naves enemigas. Un enemigo se define mediante
 // un conjunto de propiedades provenientes de 3 sitios distintos, que
 // se aplican  este orden:
-// 1. baseParameters: propiedad del prototipo con los valores por
+// 1. baseParameters: variable del constructor con los valores por
 //    omisión para las constantes A..H de las velocidades vx y vy
 // 2. parámetros definidos en la plantilla blueprint que se pasa como
 //    parámetro al crear el enemigo. Pueden modificar las propiedades
@@ -190,28 +261,39 @@ PlayerMissile.prototype.step = function(dt)  {
 // playGame() de este fichero.
 
 var Enemy = function(blueprint,override) {
-    // Cada instancia tendrá las propiedades definidas en baseParameters
-    this.merge(this.baseParameters);
 
-    // Se llama a setup para que se añadan como propiedades el sprite
-    // y los atributos definidos en el parámetro blueprint, pudiendo
-    // estas modificar los definidos en baseParameters
-    this.setup(blueprint.sprite,blueprint);
+    var baseParameters =  { A: 0, B: 0, C: 0, D: 0, 
+                            E: 0, F: 0, G: 0, H: 0 }
+
+    // Cada instancia tendrá las propiedades definidas en baseParameters
+    for (var prop in baseParameters) {
+	this[prop] = baseParameters[prop];
+    }
+
+    // Se copian los atributos definidos en el parámetro blueprint,
+    // pudiendo modificar los definidos en baseParameters
+    for (prop in blueprint) {
+	this[prop] = blueprint[prop];
+    }
 
     // Se copian los atributos definidos en el parámetro override,
     // pudiendo modificar los definidos en baseParameters y en
     // blueprint
-    this.merge(override);
+    if(override) {
+	for (prop in override) {
+	    this[prop] = override[prop];
+	}
+    }
+
+    // En el parámetro blueprint viene la propiedad sprite, que se ha
+    // añadido más arriba a este objeto. A partir de this.sprite se
+    // localizan en SpriteSheet.map las dimensiones:
+    this.w = SpriteSheet.map[this.sprite].w;
+    this.h = SpriteSheet.map[this.sprite].h;
+
+    // Inicializa t, que es la edad de este enemigo
+    this.t = 0;
 }
-
-Enemy.prototype = new Sprite();
-
-// Inicializa los parámetros de las ecuacione de velocidad, y t, que
-// es la edad de este enemigo
-Enemy.prototype.baseParameters = { A: 0, B: 0, C: 0, D: 0, 
-                                   E: 0, F: 0, G: 0, H: 0,
-                                   t: 0 };
-
 
 Enemy.prototype.step = function(dt) {
     // Actualizamos la edad
@@ -228,7 +310,7 @@ Enemy.prototype.step = function(dt) {
     // C: periodo de la velocidad horizontal sinusoidal
     // D: desplazamiento en el tiempo de la velocidad horizontal sinusoidal
     this.vx = this.A + this.B * Math.sin(this.C * this.t + this.D);
-
+    
     // vy tiene una componente constante E, y otra que va variando
     // cíclicamente en función de la edad del enemigo (t), según la
     // sinuisoide definida por las constantes F, G y H.
@@ -242,11 +324,18 @@ Enemy.prototype.step = function(dt) {
     this.y += this.vy * dt;
 
     if(this.y > Game.height ||
-       this.x < -this.w ||
+       this.x < -this.w||
        this.x > Game.width) {
 	this.board.remove(this);
     }
 }
+
+// Metodo draw, que anadimos al prototipo para que cada instancia de
+// Enemy no tenga una copia de el
+Enemy.prototype.draw = function(ctx) {
+    SpriteSheet.draw(ctx,this.sprite,this.x,this.y);
+}
+
 
 
 $(function() {

@@ -61,3 +61,63 @@
 
 */
 
+describe("Enemy", function(){
+   
+   var canvas, ctx;
+	var board;
+	
+	beforeEach(function(){
+       
+      loadFixtures('index.html');
+
+      canvas = $('#game')[0];
+      expect(canvas).toExist();
+
+      ctx = canvas.getContext('2d');
+      expect(ctx).toBeDefined();
+      board = new GameBoard();
+   	oldSpriteSheet = SpriteSheet;
+   });
+   
+   afterEach(function(){
+   	SpriteSheet = oldSpriteSheet;
+   });
+
+	it("Draw Enemy", function(){
+		SpriteSheet = {
+			draw: function(){},
+			map: {missile: { sx: 0, sy: 30, w: 2, h: 10, frames: 1 },
+					ship: { sx: 0, sy: 0, w: 37, h: 42, frames: 1 },
+					enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 },}
+		};
+		var aux = {};
+		enemyAux = board.add(new Enemy(enemies.basic));
+		
+		spyOn(SpriteSheet, 'draw');
+		enemyAux.draw(aux);
+		
+		expect(SpriteSheet.draw.calls[0].args[2]).toEqual(enemyAux.x);
+		expect(SpriteSheet.draw.calls[0].args[3]).toEqual(enemyAux.y);
+	});
+	
+	it("Step Enemy", function(){
+		SpriteSheet = {
+			draw: function(){},
+			map: {missile: { sx: 0, sy: 30, w: 2, h: 10, frames: 1 },
+					ship: { sx: 0, sy: 0, w: 37, h: 42, frames: 1 },
+					enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 },}
+		};
+		enemyAux = new Enemy(enemies.basic);
+		var newEnemy = {
+			remove: function() {}
+		};
+		
+		enemyAux.board = newEnemy;
+		spyOn(newEnemy, "remove");
+		
+		expect(newEnemy.remove).not.toHaveBeenCalled();
+		
+		enemyAux.step(3.5);
+		expect(newEnemy.remove).toHaveBeenCalled();
+	});
+});
