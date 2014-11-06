@@ -5,7 +5,7 @@ var sprites = {
     enemy_bee: { sx: 79, sy: 0, w: 37, h: 43, frames: 1 },
     enemy_ship: { sx: 116, sy: 0, w: 42, h: 43, frames: 1 },
     enemy_circle: { sx: 158, sy: 0, w: 32, h: 33, frames: 1 },
-    explosion: { sx: 0, sy: 64, w: 64, h: 64, frames: 12 },
+    explosion: { sx: 0, sy: 64, w: 64, h: 64, frames: 12 }
 };
 
 
@@ -132,48 +132,41 @@ var PlayerShip = function() {
     this.maxVel = 200;
 
     this.step = function(dt) {
-	if(Game.keys['left']) { this.vx = -this.maxVel; }
-	else if(Game.keys['right']) { this.vx = this.maxVel; }
-	else { this.vx = 0; }
+		if(Game.keys['left']) { this.vx = -this.maxVel; }
+		else if(Game.keys['right']) { this.vx = this.maxVel; }
+		else { this.vx = 0; }
 
-	this.x += this.vx * dt;
+		this.x += this.vx * dt;
 
-	if(this.x < 0) { this.x = 0; }
-	else if(this.x > Game.width - this.w) { 
-	    this.x = Game.width - this.w 
-	}
+		if(this.x < 0) { this.x = 0; }
+		else if(this.x > Game.width - this.w) { 
+			 this.x = Game.width - this.w 
+		}
 
-	this.reload-=dt;
-	if(Game.keys['fire'] && this.reload < 0) {
+		this.reload-=dt;
+		if(Game.keys['fire'] && this.reload < 0) {
+			 // Esta pulsada la tecla de disparo y ya ha pasado el tiempo reload
+			 Game.keys['fire'] = false;
+			 this.reload = this.reloadTime;
+
+			 // Se añaden al gameboard 2 misiles 
+			 this.board.add(new PlayerMissile(this.x,this.y+this.h/2));
+			 this.board.add(new PlayerMissile(this.x+this.w,this.y+this.h/2));
+		}
+		if(Game.keys['n'] && this.reload < 0) {
 	    // Esta pulsada la tecla de disparo y ya ha pasado el tiempo reload
-	    Game.keys['fire'] = false;
+	    Game.keys['n'] = false;
 	    this.reload = this.reloadTime;
-
-	    // Se añaden al gameboard 2 misiles 
-	    this.board.add(new PlayerMissile(this.x,this.y+this.h/2));
-	    this.board.add(new PlayerMissile(this.x+this.w,this.y+this.h/2));
+	    this.board.add(new PlayerFireN(this.x+this.w,this.y+this.h/2));
 	}
+
 	if(Game.keys['b'] && this.reload < 0) {
 	    // Esta pulsada la tecla de disparo y ya ha pasado el tiempo reload
 	    Game.keys['b'] = false;
 	    this.reload = this.reloadTime;
-
-	    // Se añaden al gameboard 2 misiles 
-	    this.board.add(new PlayerFireB(this.x,this.y+this.h/2));
-
+	    this.board.add(new PlayerFireB(this.x+this.w,this.y+this.h/2));
 	}
-	if(Game.keys['n'] && this.reload < 0) {
-	    // Esta pulsada la tecla de disparo y ya ha pasado el tiempo reload
-	    Game.keys['n'] = false;
-	    this.reload = this.reloadTime;
-
-	    // Se añaden al gameboard 2 misiles 
-	    this.board.add(new PlayerFireN(this.x,this.y+this.h/2));
-
-	}
-    }
-
-
+   }
 
     this.draw = function(ctx) {
 	SpriteSheet.draw(ctx,'ship',this.x,this.y,0);
@@ -202,42 +195,48 @@ PlayerMissile.prototype.draw = function(ctx)  {
     SpriteSheet.draw(ctx,'missile',this.x,this.y);
 };
 
-var FireBallB = function(x,y){
-this.w = (SpriteSheet.map['explosion'].w);
-this.h = (SpriteSheet.map['explosion'].h);
-this.x = x - this.w/2;
-this.y = y - this.h;
-this.vy = -1500;
-this.vx = -150;
+var PlayerFireN = function(x,y) {
+    this.w = SpriteSheet.map['explosion'].w;
+    this.h = SpriteSheet.map['explosion'].h;
+    this.x = x - this.w/2; 
+
+    this.y = y - this.h; 
+    this.vy = -1100;
+    this.vx = -150;
 };
-FireBallB.prototype.step = function(dt) {
-this.x += this.vx * dt;
-this.y += this.vy * dt;
-this.vy=this.vy+100;
-if(this.y < -this.h) { this.board.remove(this); }
-if(this.x < -this.w) { this.board.remove(this); }
+
+PlayerFireN.prototype.step = function(dt)  {
+    this.x += this.vx * -dt;
+    this.y += this.vy * dt;
+    this.vy=this.vy+100;
+    if(this.y < -this.h) { this.board.remove(this); }
+    if(this.x < -this.w) { this.board.remove(this); }
 };
-FireBallB.prototype.draw = function(ctx) {
-SpriteSheet.draw(ctx,'explosion',this.x,this.y);
+
+PlayerFireN.prototype.draw = function(ctx)  {
+    SpriteSheet.draw(ctx,'explosion',this.x,this.y);
 };
-// fireballN
-var FireBallN = function(x,y){
-this.w = (SpriteSheet.map['explosion'].w);
-this.h = (SpriteSheet.map['explosion'].h);
-this.x = x - this.w/2;
-this.y = y - this.h;
-this.vy = -1500;
-this.vx = 150;
+
+var PlayerFireB = function(x,y) {
+    this.w = SpriteSheet.map['explosion'].w;
+    this.h = SpriteSheet.map['explosion'].h;
+    this.x = x - this.w; 
+
+    this.y = y - this.h; 
+    this.vy = -1100;
+    this.vx = -150;
 };
-FireBallN.prototype.step = function(dt) {
-this.x += this.vx * dt;
-this.y += this.vy * dt;
-this.vy=this.vy+100;
-if(this.y < -this.h) { this.board.remove(this); }
-if(this.x < -this.w) { this.board.remove(this); }
+
+PlayerFireB.prototype.step = function(dt)  {
+    this.x += this.vx * dt;
+    this.y += this.vy * dt;
+    this.vy=this.vy+100;
+    if(this.y < -this.h) { this.board.remove(this); }
+    if(this.x < -this.w) { this.board.remove(this); }
 };
-FireBallN.prototype.draw = function(ctx) {
-SpriteSheet.draw(ctx,'explosion',this.x,this.y);
+
+PlayerFireB.prototype.draw = function(ctx)  {
+    SpriteSheet.draw(ctx,'explosion',this.x,this.y);
 };
 
 
