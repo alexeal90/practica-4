@@ -91,9 +91,9 @@ var PlayerShip = function() {
    
 	this.setup('ship', { vx: 0, reloadTime: 0.25, maxVel: 200 });
    
+   this.reload = this.reloadTime;
    this.x = Game.width/2 - this.w / 2;
    this.y = Game.height - 10 - this.h;  
-   this.reload = this.reloadTime;
 
    this.step = function(dt) {
 		if(Game.keys['left']) { this.vx = -this.maxVel; }
@@ -128,9 +128,6 @@ var PlayerShip = function() {
 		}
    }
 
-   this.draw = function(ctx) {
-		SpriteSheet.draw(ctx,'ship',this.x,this.y,0);
-   }
 }
 
 // Heredamos del prototipo new Sprite()
@@ -148,6 +145,8 @@ var PlayerMissile = function(x,y) {
     this.y = y - this.h; 
 };
 
+PlayerMissile.prototype = new Sprite();
+
 PlayerMissile.prototype.step = function(dt)  {
     this.y += this.vy * dt;
     if(this.y < -this.h) { this.board.remove(this); }
@@ -157,17 +156,14 @@ PlayerMissile.prototype.draw = function(ctx)  {
     SpriteSheet.draw(ctx,'missile',this.x,this.y);
 };
 
-PlayerMissile.prototype = new Sprite();
-
 var PlayerFireN = function(x,y) {
-    this.w = SpriteSheet.map['explosion'].w;
-    this.h = SpriteSheet.map['explosion'].h;
+    
+    this.setup('explosion',{ vy: -1100, vx: -150});
     this.x = x - this.w/2; 
-
     this.y = y - this.h; 
-    this.vy = -1100;
-    this.vx = -150;
 };
+
+PlayerFireN.prototype = new Sprite();
 
 PlayerFireN.prototype.step = function(dt)  {
     this.x += this.vx * -dt;
@@ -181,17 +177,14 @@ PlayerFireN.prototype.draw = function(ctx)  {
     SpriteSheet.draw(ctx,'explosion',this.x,this.y);
 };
 
-PlayerFireN.prototype = new Sprite();
-
 var PlayerFireB = function(x,y) {
-    this.w = SpriteSheet.map['explosion'].w;
-    this.h = SpriteSheet.map['explosion'].h;
+    
+    this.setup('explosion',{ vy: -1100, vx: -150});
     this.x = x - this.w; 
-
     this.y = y - this.h; 
-    this.vy = -1100;
-    this.vx = -150;
 };
+
+PlayerFireB.prototype = new Sprite();
 
 PlayerFireB.prototype.step = function(dt)  {
     this.x += this.vx * dt;
@@ -205,58 +198,41 @@ PlayerFireB.prototype.draw = function(ctx)  {
     SpriteSheet.draw(ctx,'explosion',this.x,this.y);
 };
 
-PlayerFireB.prototype = new Sprite();
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Enemigos//
 
 var Enemy = function(blueprint,override) {
-
-    var baseParameters =  { A: 0, B: 0, C: 0, D: 0, 
-                            E: 0, F: 0, G: 0, H: 0 }
-
-    for (var prop in baseParameters) {
-		this[prop] = baseParameters[prop];
-    }
-
-    for (prop in blueprint) {
-		this[prop] = blueprint[prop];
-    }
-
-    if(override) {
-		for (prop in override) {
-	    this[prop] = override[prop];
-		}
-    }
-    this.w = SpriteSheet.map[this.sprite].w;
-    this.h = SpriteSheet.map[this.sprite].h;
-    this.t = 0;
+    
+    this.merge(this.baseParameters);
+    this.setup(blueprint.sprite,blueprint);
+    this.merge(override);
 }
 
+Enemy.prototype = new Sprite();
+
+Enemy.prototype.baseParameters = { A: 0, B: 0, C: 0, D: 0, 
+                                   E: 0, F: 0, G: 0, H: 0,
+                                   t: 0 };
+
+
 Enemy.prototype.step = function(dt) {
+
     this.t += dt;
     this.vx = this.A + this.B * Math.sin(this.C * this.t + this.D);
     this.vy = this.E + this.F * Math.sin(this.G * this.t + this.H);
-
     this.x += this.vx * dt;
     this.y += this.vy * dt;
 
     if(this.y > Game.height ||
-       this.x < -this.w||
-       this.x > Game.width) {
-		 this.board.remove(this);
+      this.x < -this.w ||
+      this.x > Game.width) {
+		this.board.remove(this);
     }
 }
-
-Enemy.prototype.draw = function(ctx) {
-    SpriteSheet.draw(ctx,this.sprite,this.x,this.y);
-}
-
 
 
 $(function() {
     Game.initialize("game",sprites,startGame);
 });
-

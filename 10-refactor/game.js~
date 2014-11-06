@@ -91,9 +91,9 @@ var PlayerShip = function() {
    
 	this.setup('ship', { vx: 0, reloadTime: 0.25, maxVel: 200 });
    
+   this.reload = this.reloadTime;
    this.x = Game.width/2 - this.w / 2;
    this.y = Game.height - 10 - this.h;  
-   this.reload = this.reloadTime;
 
    this.step = function(dt) {
 		if(Game.keys['left']) { this.vx = -this.maxVel; }
@@ -128,9 +128,6 @@ var PlayerShip = function() {
 		}
    }
 
-   this.draw = function(ctx) {
-		SpriteSheet.draw(ctx,'ship',this.x,this.y,0);
-   }
 }
 
 // Heredamos del prototipo new Sprite()
@@ -148,6 +145,8 @@ var PlayerMissile = function(x,y) {
     this.y = y - this.h; 
 };
 
+PlayerMissile.prototype = new Sprite();
+
 PlayerMissile.prototype.step = function(dt)  {
     this.y += this.vy * dt;
     if(this.y < -this.h) { this.board.remove(this); }
@@ -157,17 +156,14 @@ PlayerMissile.prototype.draw = function(ctx)  {
     SpriteSheet.draw(ctx,'missile',this.x,this.y);
 };
 
-PlayerMissile.prototype = new Sprite();
-
 var PlayerFireN = function(x,y) {
-    this.w = SpriteSheet.map['explosion'].w;
-    this.h = SpriteSheet.map['explosion'].h;
+    
+    this.setup('explosion',{ vy: -1100, vx: -150});
     this.x = x - this.w/2; 
-
     this.y = y - this.h; 
-    this.vy = -1100;
-    this.vx = -150;
 };
+
+PlayerFireN.prototype = new Sprite();
 
 PlayerFireN.prototype.step = function(dt)  {
     this.x += this.vx * -dt;
@@ -182,14 +178,13 @@ PlayerFireN.prototype.draw = function(ctx)  {
 };
 
 var PlayerFireB = function(x,y) {
-    this.w = SpriteSheet.map['explosion'].w;
-    this.h = SpriteSheet.map['explosion'].h;
+    
+    this.setup('explosion',{ vy: -1100, vx: -150});
     this.x = x - this.w; 
-
     this.y = y - this.h; 
-    this.vy = -1100;
-    this.vx = -150;
 };
+
+PlayerFireB.prototype = new Sprite();
 
 PlayerFireB.prototype.step = function(dt)  {
     this.x += this.vx * dt;
