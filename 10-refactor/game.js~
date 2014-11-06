@@ -2,9 +2,6 @@ var sprites = {
     ship: { sx: 0, sy: 0, w: 37, h: 42, frames: 1 },
     missile: { sx: 0, sy: 30, w: 2, h: 10, frames: 1 },
     enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 },
-    enemy_bee: { sx: 79, sy: 0, w: 37, h: 43, frames: 1 },
-    enemy_ship: { sx: 116, sy: 0, w: 42, h: 43, frames: 1 },
-    enemy_circle: { sx: 158, sy: 0, w: 32, h: 33, frames: 1 },
     explosion: { sx: 0, sy: 64, w: 64, h: 64, frames: 12 }
 };
 
@@ -79,10 +76,10 @@ var Starfield = function(speed,opacity,numStars,clear) {
 		}
     }
 
-    this.step = function(dt) {
+   this.step = function(dt) {
 		offset += dt * speed;
 		offset = offset % stars.height;
-    }
+   }
 }
 
 
@@ -91,17 +88,14 @@ var Starfield = function(speed,opacity,numStars,clear) {
 //Nave//
 
 var PlayerShip = function() { 
-    this.w =  SpriteSheet.map['ship'].w;
-    this.h =  SpriteSheet.map['ship'].h;
-    this.x = Game.width/2 - this.w / 2;
-    this.y = Game.height - 10 - this.h;
-    this.vx = 0;
-    
-    this.reloadTime = 0.25;
-    this.reload = this.reloadTime;
-    this.maxVel = 200;
+   
+	this.setup('ship', { vx: 0, reloadTime: 0.25, maxVel: 200 });
+   
+   this.x = Game.width/2 - this.w / 2;
+   this.y = Game.height - 10 - this.h;  
+   this.reload = this.reloadTime;
 
-    this.step = function(dt) {
+   this.step = function(dt) {
 		if(Game.keys['left']) { this.vx = -this.maxVel; }
 		else if(Game.keys['right']) { this.vx = this.maxVel; }
 		else { this.vx = 0; }
@@ -139,18 +133,19 @@ var PlayerShip = function() {
    }
 }
 
+// Heredamos del prototipo new Sprite()
+PlayerShip.prototype = new Sprite();
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Arsenal//
 
 var PlayerMissile = function(x,y) {
-    this.w = SpriteSheet.map['missile'].w;
-    this.h = SpriteSheet.map['missile'].h;
-    this.x = x - this.w/2; 
 
+    this.setup('missile',{ vy: -700 });
+    this.x = x - this.w/2; 
     this.y = y - this.h; 
-    this.vy = -700;
 };
 
 PlayerMissile.prototype.step = function(dt)  {
@@ -161,6 +156,8 @@ PlayerMissile.prototype.step = function(dt)  {
 PlayerMissile.prototype.draw = function(ctx)  {
     SpriteSheet.draw(ctx,'missile',this.x,this.y);
 };
+
+PlayerMissile.prototype = new Sprite();
 
 var PlayerFireN = function(x,y) {
     this.w = SpriteSheet.map['explosion'].w;

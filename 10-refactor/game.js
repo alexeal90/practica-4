@@ -76,10 +76,10 @@ var Starfield = function(speed,opacity,numStars,clear) {
 		}
     }
 
-    this.step = function(dt) {
+   this.step = function(dt) {
 		offset += dt * speed;
 		offset = offset % stars.height;
-    }
+   }
 }
 
 
@@ -88,17 +88,14 @@ var Starfield = function(speed,opacity,numStars,clear) {
 //Nave//
 
 var PlayerShip = function() { 
-    this.w =  SpriteSheet.map['ship'].w;
-    this.h =  SpriteSheet.map['ship'].h;
-    this.x = Game.width/2 - this.w / 2;
-    this.y = Game.height - 10 - this.h;
-    this.vx = 0;
-    
-    this.reloadTime = 0.25;
-    this.reload = this.reloadTime;
-    this.maxVel = 200;
+   
+	this.setup('ship', { vx: 0, reloadTime: 0.25, maxVel: 200 });
+   
+   this.x = Game.width/2 - this.w / 2;
+   this.y = Game.height - 10 - this.h;  
+   this.reload = this.reloadTime;
 
-    this.step = function(dt) {
+   this.step = function(dt) {
 		if(Game.keys['left']) { this.vx = -this.maxVel; }
 		else if(Game.keys['right']) { this.vx = this.maxVel; }
 		else { this.vx = 0; }
@@ -136,18 +133,19 @@ var PlayerShip = function() {
    }
 }
 
+// Heredamos del prototipo new Sprite()
+PlayerShip.prototype = new Sprite();
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Arsenal//
 
 var PlayerMissile = function(x,y) {
-    this.w = SpriteSheet.map['missile'].w;
-    this.h = SpriteSheet.map['missile'].h;
-    this.x = x - this.w/2; 
 
+    this.setup('missile',{ vy: -700 });
+    this.x = x - this.w/2; 
     this.y = y - this.h; 
-    this.vy = -700;
 };
 
 PlayerMissile.prototype.step = function(dt)  {
@@ -158,6 +156,8 @@ PlayerMissile.prototype.step = function(dt)  {
 PlayerMissile.prototype.draw = function(ctx)  {
     SpriteSheet.draw(ctx,'missile',this.x,this.y);
 };
+
+PlayerMissile.prototype = new Sprite();
 
 var PlayerFireN = function(x,y) {
     this.w = SpriteSheet.map['explosion'].w;
@@ -181,6 +181,8 @@ PlayerFireN.prototype.draw = function(ctx)  {
     SpriteSheet.draw(ctx,'explosion',this.x,this.y);
 };
 
+PlayerFireN.prototype = new Sprite();
+
 var PlayerFireB = function(x,y) {
     this.w = SpriteSheet.map['explosion'].w;
     this.h = SpriteSheet.map['explosion'].h;
@@ -202,6 +204,8 @@ PlayerFireB.prototype.step = function(dt)  {
 PlayerFireB.prototype.draw = function(ctx)  {
     SpriteSheet.draw(ctx,'explosion',this.x,this.y);
 };
+
+PlayerFireB.prototype = new Sprite();
 
 
 
