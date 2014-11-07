@@ -8,7 +8,6 @@ var sprites = {
     explosion: { sx: 0, sy: 64, w: 64, h: 64, frames: 12 }
 };
 
-
 var enemies = {
     // B, C y E substituirán a los valores por defecto definidos en la
     // variable baseParameters del constructor Enemy(). Ver
