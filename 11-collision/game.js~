@@ -209,8 +209,6 @@ PlayerFireN.prototype.step = function(dt)  {
     this.x += this.vx * -dt;
     this.y += this.vy * dt;
     this.vy=this.vy+100;
-    var collision = this.board.collide(this,OBJECT_ENEMY);
-	 if(collision) {collision.hit(this.damage)};
     if(this.y < -this.h) { this.board.remove(this); }
     if(this.x < -this.w) { this.board.remove(this); }
 };
@@ -233,8 +231,6 @@ PlayerFireB.prototype.step = function(dt)  {
     this.x += this.vx * dt;
     this.y += this.vy * dt;
     this.vy=this.vy+100;
-    var collision = this.board.collide(this,OBJECT_ENEMY);
-	 if(collision) {collision.hit(this.damage)};
     if(this.y < -this.h) { this.board.remove(this); }
     if(this.x < -this.w) { this.board.remove(this); }
 };
