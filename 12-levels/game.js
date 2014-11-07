@@ -43,8 +43,8 @@ var enemies = {
 		
 		lilBoss:    { x: 100,   y: -50, sprite: 'enemy_ship', health: 2500, 
 		E: 10 },
-		finalBoss:    { x: 200,   y: -50, sprite: 'enemy_boss', health: 10000, 
-		E: 3 }
+		finalBoss:    { x: 140,   y: -50, sprite: 'enemy_boss', health: 10000, 
+		E: 6 }
 };
 
 
@@ -100,15 +100,23 @@ var level2= [
     [ 200,      2000,  200,         'little' ,       {x:200}         ],
     [ 200,      2000,  200,         'little' ,       {x:250}         ],
     [ 200,      2000,  200,         'little' ,       {x:300}         ],
+    [ 600,    1000, 400,         'wiggle',   { x: 150, B:60, C:-1, E:70, G:2} ],   
     [ 1000,     1200,  200,         'lilBoss'               ],
     [ 1000,     1200,  200,         'lilBoss',       {x:200}        ],
     [ 6000,     10000, 500  ,       'ltr' ,        { x: 180, A: -20,C: 5, E: 50, F:100, G:1, H: Math.PI/2  }],
     [ 6000,     10000, 500  ,       'ltr' ,        { x: 80, A: 20,C: 5, E: 50, F:100, G:1, H: Math.PI/2  }],
+    [ 12000,      23000,  200,         'little' ,               ],
+    [ 12000,      23000,  200,         'little' ,       {x:50}         ],
+    [ 12000,      23000,  200,         'little' ,       {x:100}       ],
+    [ 12000,      23000,  200,         'little' ,       {x:150}       ],
+    [ 12000,      23000,  200,         'little' ,       {x:200}         ],
+    [ 12000,      23000,  200,         'little' ,       {x:250}         ],
+    [ 12000,      23000,  200,         'little' ,       {x:300}         ],
     [ 20000,    21500, 400,         'wiggle',   { x: 50, B:60, C:1, E:70, G:2} ],   
-    [ 20000,    20200,  200,         'finalboss'], 
-    [ 25000,    25500, 500,         'straight', { x:0, B:150, C:2, E:400}],
-    [ 25000,    25500, 500,         'straight', { x:280, B:160, C:-1.7, E:400}],
-    [ 26500,    27000, 500,         'straight', { x:280, B:160, C:-1.7, E:400}]
+    [ 25000,    30000, 1000,         'straight', { x:0, B:150, C:2, E:400}],
+    [ 25000,    30000, 1000,         'straight', { x:280, B:160, C:-1.7, E:400}],
+    [ 25000,    25200,  200,         'finalBoss'],
+    
     
 ];
 
@@ -119,7 +127,7 @@ var playGame = function() {
     // Se un nuevo nivel al tablero de juego, pasando la definici.n de
     // nivel level1 y la funci.n callback a la que llamar si se ha
     // ganado el juego
-    board.add(new Level(level1, winGame));
+    board.add(new Level(level2, winGame));
     Game.setBoard(3,board);
 };
 
