@@ -41,8 +41,10 @@ var enemies = {
     step:     { x: 0,   y: -50, sprite: 'enemy_circle', health: 10,
 		B: 150, C: 1.2, E: 75 },
 		
-		boss:    { x: 140,   y: -50, sprite: 'enemy_ship', health: 5000, 
+		lilBoss:    { x: 100,   y: -50, sprite: 'enemy_ship', health: 2500, 
 		E: 10 },
+		finalBoss:    { x: 200,   y: -50, sprite: 'enemy_boss', health: 10000, 
+		E: 3 }
 };
 
 
@@ -90,6 +92,7 @@ var level1 = [
 
 var level2= [
     [ 0,        4000,  500,         'step' ,       {E: 70, health:20}         ],
+    [ 0,        4000,  500,         'step' ,       {x: 300,C: -1.2, E: 70, health:20}         ],
     [ 200,      2000,  200,         'little' ,               ],
     [ 200,      2000,  200,         'little' ,       {x:50}         ],
     [ 200,      2000,  200,         'little' ,       {x:100}       ],
@@ -97,12 +100,15 @@ var level2= [
     [ 200,      2000,  200,         'little' ,       {x:200}         ],
     [ 200,      2000,  200,         'little' ,       {x:250}         ],
     [ 200,      2000,  200,         'little' ,       {x:300}         ],
-    [ 1000,     1200,  200,         'boss'               ],
-    [ 6000,     10000, 500  ,       'ltr' ,        { x: 180, A: 0,C: 10, E: 50, F:100, G:1, H: Math.PI/2  }],
-    [ 20000,    21500, 400,         'wiggle',   { x: 50, B:60, C:1, E:70, G:2} ],    
-    [ 20000,    23000, 400,         'wiggle',   { x: 250, B:-60, C:0.5, E:70, G:2} ],
-    [ 25000,    25500, 500,         'straight', { x:0, B:160, C:1.7, E:400}],
-    [ 25000,    25500, 500,         'straight', { x:280, B:160, C:-1.7, E:400}]
+    [ 1000,     1200,  200,         'lilBoss'               ],
+    [ 1000,     1200,  200,         'lilBoss',       {x:200}        ],
+    [ 6000,     10000, 500  ,       'ltr' ,        { x: 180, A: -20,C: 5, E: 50, F:100, G:1, H: Math.PI/2  }],
+    [ 6000,     10000, 500  ,       'ltr' ,        { x: 80, A: 20,C: 5, E: 50, F:100, G:1, H: Math.PI/2  }],
+    [ 20000,    21500, 400,         'wiggle',   { x: 50, B:60, C:1, E:70, G:2} ],   
+    [ 20000,    20200,  200,         'finalboss'], 
+    [ 25000,    25500, 500,         'straight', { x:0, B:150, C:2, E:400}],
+    [ 25000,    25500, 500,         'straight', { x:280, B:160, C:-1.7, E:400}],
+    [ 26500,    27000, 500,         'straight', { x:280, B:160, C:-1.7, E:400}]
     
 ];
 
@@ -113,18 +119,18 @@ var playGame = function() {
     // Se un nuevo nivel al tablero de juego, pasando la definici.n de
     // nivel level1 y la funci.n callback a la que llamar si se ha
     // ganado el juego
-    board.add(new Level(level2, winGame));
+    board.add(new Level(level1, winGame));
     Game.setBoard(3,board);
 };
 
-var playlvl2 = function() {
+var lvlContinue = function() {
     var board = new GameBoard();
     board.add(new PlayerShip());
 
     // Se un nuevo nivel al tablero de juego, pasando la definici.n de
     // nivel level1 y la funci.n callback a la que llamar si se ha
     // ganado el juego
-    board.add(new Level(level2, winGameFinal));
+    board.add(new Level(level2, winGame2));
     Game.setBoard(3,board);
 };
 
@@ -132,7 +138,7 @@ var playlvl2 = function() {
 
 // Llamada cuando han desaparecido todos los enemigos del nivel sin
 // que alcancen a la nave del jugador
-var winGameFinal = function() {
+var winGame2 = function() {
     Game.setBoard(3,new TitleScreen("You win!", 
                                     "Press fire to play again",
                                     playGame));
@@ -142,8 +148,8 @@ var winGameFinal = function() {
 // que alcancen a la nave del jugador
 var winGame = function() {
     Game.setBoard(3,new TitleScreen("You win this level!", 
-                                    "Press fire to play next level",
-                                    playlvl2));
+                                    "Press fire to play level 2 (harder)",
+                                    lvlContinue));
 };
 
 
