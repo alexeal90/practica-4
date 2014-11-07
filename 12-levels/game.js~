@@ -41,8 +41,10 @@ var enemies = {
     step:     { x: 0,   y: -50, sprite: 'enemy_circle', health: 10,
 		B: 150, C: 1.2, E: 75 },
 		
-		boss:    { x: 140,   y: -50, sprite: 'enemy_ship', health: 5000, 
+		lilboss:    { x: 100,   y: -50, sprite: 'enemy_ship', health: 500, 
 		E: 10 },
+		finalboss:    { x: 140,   y: -50, sprite: 'enemy_boss', health: 10000, 
+		E: 5 }
 };
 
 
@@ -97,7 +99,8 @@ var level2= [
     [ 200,      2000,  200,         'little' ,       {x:200}         ],
     [ 200,      2000,  200,         'little' ,       {x:250}         ],
     [ 200,      2000,  200,         'little' ,       {x:300}         ],
-    [ 1000,     1200,  200,         'boss'               ],
+    [ 1000,     1200,  200,         'lilboss'               ],
+    [ 1000,     1200,  200,         'finalboss'        {x:200}    ],
     [ 6000,     10000, 500  ,       'ltr' ,        { x: 180, A: 0,C: 10, E: 50, F:100, G:1, H: Math.PI/2  }],
     [ 20000,    21500, 400,         'wiggle',   { x: 50, B:60, C:1, E:70, G:2} ],    
     [ 20000,    23000, 400,         'wiggle',   { x: 250, B:-60, C:0.5, E:70, G:2} ],

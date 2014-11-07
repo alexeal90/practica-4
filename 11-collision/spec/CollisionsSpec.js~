@@ -147,7 +147,7 @@ describe("CollisionsSpec", function(){
       enemyAux.x = 5;
       enemyAux.y = 5;
 
-      board.step(0.05);
+      board.step(0.01);
 
 		// Como enemigo y misil tienen mismas coordenadas, hay colision y, como el daño del misil es mayor que la vida del enemigo,
 		// en board.objects tendra solo un objeto cuyo sprite explosion.
@@ -158,15 +158,14 @@ describe("CollisionsSpec", function(){
 	
 	it("Fireball destruye enemigo",function(){
       
-      var fireBallAux = board.add(new PlayerFireN(5, 5));
-		fireBallAux.x = 5;
-      fireBallAux.y = 5;
+      var fireBallAux = board.add(new PlayerFireN(10, 10));
+
 
 		var enemyAux = board.add(new Enemy(enemies.basic));
       enemyAux.x = 5;
       enemyAux.y = 5;
 
-      board.step(0.05);
+      board.step(0.01);
 
 		expect(board.objects[0].sprite).toBe('explosion');
       expect(board.objects.length).toBe(2);
