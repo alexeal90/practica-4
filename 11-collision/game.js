@@ -197,7 +197,7 @@ PlayerMissile.prototype.step = function(dt)  {
 
 var PlayerFireN = function(x,y) {
     
-    this.setup('explosion',{ vy: -1100, vx: -150});
+    this.setup('explosion',{ vy: -1100, vx: -150, damage: 10 });
     this.x = x - this.w/2; 
     this.y = y - this.h; 
 };
@@ -221,7 +221,7 @@ PlayerFireN.prototype.draw = function(ctx)  {
 
 var PlayerFireB = function(x,y) {
     
-    this.setup('explosion',{ vy: -1100, vx: -150});
+    this.setup('explosion',{ vy: -1100, vx: -150, damage: 10 });
     this.x = x - this.w; 
     this.y = y - this.h; 
 };
