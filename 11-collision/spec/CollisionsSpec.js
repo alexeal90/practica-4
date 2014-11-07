@@ -136,22 +136,16 @@ describe("CollisionsSpec", function(){
 
 	});
 	
-	it("Misil y Fireball destruyen enemigo",function(){
+	it("Misil destruye enemigo",function(){
   
       var missileAux = board.add(new PlayerMissile(5,5));
       missileAux.x = 5;
       missileAux.y = 5;
       missileAux.damage = 21;
-      
-      var fireBallAux = new PlayerFireN(10, 10);
 
-		var enemyAux1 = board.add(new Enemy(enemies.basic));
-      enemyAux1.x = 5;
-      enemyAux1.y = 5;
-
-		var enemyAux2 = new Enemy(enemies.basic);
-      enemyAux2.x = 10;
-      enemyAux2.y = 10;
+		var enemyAux = board.add(new Enemy(enemies.basic));
+      enemyAux.x = 5;
+      enemyAux.y = 5;
 
       board.step(0.01);
 
@@ -159,11 +153,24 @@ describe("CollisionsSpec", function(){
 		// en board.objects tendra solo un objeto cuyo sprite explosion.
 		expect(board.objects[0].sprite).toBe('explosion');
       expect(board.objects.length).toBe(1);
-      
-      board.add(enemyAux2);
-      board.add(fireBallAux);
-      
-	});
 
+	});
+	
+	it("Fireball destruye enemigo",function(){
+      
+      var fireBallAux = board.add(new PlayerFireN(5, 5));
+		fireBallAux.x = 5;
+      fireBallAux.y = 5;
+
+		var enemyAux = board.add(new Enemy(enemies.basic));
+      enemyAux.x = 5;
+      enemyAux.y = 5;
+
+      board.step(0.01);
+
+		expect(board.objects[0].sprite).toBe('explosion');
+      expect(board.objects.length).toBe(2);
+
+	});
 });
 
