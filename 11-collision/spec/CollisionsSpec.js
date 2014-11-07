@@ -101,7 +101,27 @@ describe("CollisionsSpec", function(){
       board = new GameBoard();
    });
    
-  it("Misil destruye nave",function(){
+   it("Misil no destruye nave",function(){
+  
+		var enemyAux = board.add(new Enemy(enemies.basic));
+      enemyAux.x = 5;
+      enemyAux.y = 5;
+      enemyAux.health = 2;
+
+      var missile = board.add(new PlayerMissile(5,5));
+      missile.x = 5;
+      missile.y = 5;
+      missile.damage = 1;
+     
+      board.step(0.01);
+
+		//Como el misil le ha quitado la mitad de vida a la nave, comprobamos que sigue estando en board.objects y que tiene 1 de vida
+		expect(board.objects[0]).toBe(enemyAux);
+      expect(enemyAux.health).toBe(1);
+
+	});
+	
+	it("Misil destruye nave",function(){
   
 		var enemyAux = board.add(new Enemy(enemies.basic));
       enemyAux.x = 5;
@@ -118,113 +138,7 @@ describe("CollisionsSpec", function(){
 		//Como nave y misil estan en las mismas coordenadas, hay colision y por lo tanto el board.objects tendra solo un objeto cuyo sprite explosion.
 		expect(board.objects[0].sprite).toBe('explosion');
       expect(board.objects.length).toBe(1);
-  });
-  
-/*
-  it("Dao del misil inferior vida de la nave",function(){
-	SpriteSheet.map = { missile: {h:10, w:2},
-                            enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 },
-                            explosion: { sx: 0, sy: 64, w: 64, h: 64, frames: 12 },
-        };
+	});
 
-        var board = new GameBoard();
-	var dt= 30/10000;
-
-	var enemy = new Enemy(enemies.basic);
-        enemy.x = 5;
-        enemy.y = 5;
-        enemy.health = 20;
-	
-        var missile = new PlayerMissile(5,5);
-        missile.x = 5;
-        missile.y = 5;
-        missile.damage = 10;
-
-	board.add(enemy);
-        board.add(missile);
-         
-	//Comprobamos que antes de la colision hay dos objetos
-	expect(board.objects.length).toBe(2);
-
-        board.step(dt);
-
-	//Comprobamos que la vida del enemigo se ha reducido de 20 a 10
-	expect(enemy.health).toBe(10);
-
-	//Comprobamos que despues de la colision los misiles desaparecen y queda solo el enemigo
-	expect(board.objects[0]).toBe(enemy);
-        expect(board.objects.length).toBe(1);
-        
-        
-  });
-
-  it("FireBall destruye enemigo", function() {
-  	SpriteSheet = {
-        		map : {enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 },
-                               fireball: { sx: 0, sy: 64, w: 64, h: 64, frames: 1 },
-                               explosion: { sx: 0, sy: 64, w: 64, h: 64, frames: 12 }
-			}
-        };
-	
-	var board = new GameBoard();
-	var dt= 30/10000;
-
-	var enemy = new Enemy(enemies.basic);
-        enemy.x=2;
-        enemy.y=4;
-
-        var fireBall = new FireBallB(2,4);
-        fireBall.x=2;
-        fireBall.y=4;
-
-	board.add(enemy);
-        board.add(fireBall);
-        
-        //Comprobamos que antes de la colision hay dos objetos
-	expect(board.objects.length).toBe(2);
-      
-        board.step(dt);
-
-	//Comprobamos que tras la colision se produce una explosion y desaparece la nave enemiga
-	expect(board.objects[1].sprite).toBe('explosion');
-	
-	//Comprobamos que existen 2 objetos la explosion y la bola de fuego
-        expect(board.objects.length).toBe(2);
-        expect(board.objects[0]).toBe(fireBall);
-        
-
-  });
-        
-  it("Enemigo destruye miNave", function() {
-  	SpriteSheet = {
-        		map : {enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 },
-                               ship: { sx: 0, sy: 0, w: 37, h: 42, frames: 1 },
-                               explosion: { sx: 0, sy: 64, w: 64, h: 64, frames: 12 }
-		      }
-        };
-
-	var board = new GameBoard();
-	var dt= 30/10000;
-
-	var enemy = new Enemy(enemies.basic);
-        enemy.x=1;
-        enemy.y=2;
-
-        var miNave = new PlayerShip();
-        miNave.x=1;
-        miNave.y=2;
-                
-	board.add(enemy);
-        board.add(miNave);
-        
-	//Comprobamos que antes de la colision hay dos objetos
-	expect(board.objects.length).toBe(2);
-
-        board.step(dt);
-	
-	//Comprobamos que tras la colision desaparecen las dos naves y no existe ningun objeto
-        expect(board.objects.length).toBe(0);
-  });
-*/
 });
 
