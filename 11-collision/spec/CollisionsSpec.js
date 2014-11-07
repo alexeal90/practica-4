@@ -101,12 +101,27 @@ describe("CollisionsSpec", function(){
       board = new GameBoard();
    });
    
-   it("Misil no destruye nave",function(){
+   it("Colision nave/enemigo", function(){
+
+   	var enemyAux = board.add(new Enemy(enemies.basic));
+      enemyAux.x = 5;
+      enemyAux.y = 5;
+      
+      var naveAux = board.add(new PlayerShip());
+      naveAux.x = 5;
+      naveAux.y = 5;
+   
+      board.step(0.01);
+      
+      //Cuando nave y enemigo colisionan, las dos se destruyen por lo que en board.objects no habra nada despues de la colision
+      expect(board.objects.length).toBe(0);
+   });
+   
+   it("Misil no destruye enemigo",function(){
   
 		var enemyAux = board.add(new Enemy(enemies.basic));
       enemyAux.x = 5;
       enemyAux.y = 5;
-      enemyAux.health = 2;
 
       var missile = board.add(new PlayerMissile(5,5));
       missile.x = 5;
@@ -115,30 +130,32 @@ describe("CollisionsSpec", function(){
      
       board.step(0.01);
 
-		//Como el misil le ha quitado la mitad de vida a la nave, comprobamos que sigue estando en board.objects y que tiene 1 de vida
+		// Como el misil le ha quitado solo uno de vida al enemigo, comprobamos que sigue estando en board.objects y que tiene 19 de vida
 		expect(board.objects[0]).toBe(enemyAux);
-      expect(enemyAux.health).toBe(1);
+      expect(enemyAux.health).toBe(19);
 
 	});
 	
-	it("Misil destruye nave",function(){
+	it("Misil destruye enemigo",function(){
   
 		var enemyAux = board.add(new Enemy(enemies.basic));
       enemyAux.x = 5;
       enemyAux.y = 5;
-      enemyAux.health = 1;
 
       var missile = board.add(new PlayerMissile(5,5));
       missile.x = 5;
       missile.y = 5;
-      missile.damage = 2;
+      missile.damage = 21;
      
       board.step(0.01);
 
-		//Como nave y misil estan en las mismas coordenadas, hay colision y por lo tanto el board.objects tendra solo un objeto cuyo sprite explosion.
+		// Como enemigo y misil tienen mismas coordenadas, hay colision y, como el daño del misil es mayor que la vida del enemigo,
+		// en board.objects tendra solo un objeto cuyo sprite explosion.
 		expect(board.objects[0].sprite).toBe('explosion');
       expect(board.objects.length).toBe(1);
 	});
+
+
 
 });
 
