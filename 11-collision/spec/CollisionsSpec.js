@@ -101,19 +101,19 @@ describe("CollisionsSpec", function(){
       board = new GameBoard();
    });
    
-  it("nave colisiona misil",function(){
+  it("Misil destruye nave",function(){
   
 		var enemyAux = board.add(new Enemy(enemies.basic));
       enemyAux.x = 5;
       enemyAux.y = 5;
-      enemyAux.health = 10;
+      enemyAux.health = 1;
 
       var missile = board.add(new PlayerMissile(5,5));
       missile.x = 5;
       missile.y = 5;
-      missile.damage = 10;
+      missile.damage = 2;
      
-      board.step(0.003);
+      board.step(0.01);
 
 		//Como nave y misil estan en las mismas coordenadas, hay colision y por lo tanto el board.objects tendra solo un objeto cuyo sprite explosion.
 		expect(board.objects[0].sprite).toBe('explosion');
