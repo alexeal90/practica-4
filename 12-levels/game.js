@@ -127,9 +127,6 @@ var playGame = function() {
     var board = new GameBoard();
     board.add(new PlayerShip());
 
-    // Se un nuevo nivel al tablero de juego, pasando la definici.n de
-    // nivel level1 y la funci.n callback a la que llamar si se ha
-    // ganado el juego
     board.add(new Level(level1, winGame));
     Game.setBoard(3,board);
 };
@@ -138,41 +135,27 @@ var lvlContinue = function() {
     var board = new GameBoard();
     board.add(new PlayerShip());
 
-    // Se un nuevo nivel al tablero de juego, pasando la definici.n de
-    // nivel level1 y la funci.n callback a la que llamar si se ha
-    // ganado el juego
     board.add(new Level(level2, winGame2));
     Game.setBoard(3,board);
 };
 
-
-
-// Llamada cuando han desaparecido todos los enemigos del nivel sin
-// que alcancen a la nave del jugador
 var winGame2 = function() {
     Game.setBoard(3,new TitleScreen("You win!", 
                                     "Press fire to play again",
                                     playGame));
 };
 
-// Llamada cuando han desaparecido todos los enemigos del nivel sin
-// que alcancen a la nave del jugador
 var winGame = function() {
     Game.setBoard(3,new TitleScreen("You win this level!", 
                                     "Press fire to play level 2 (harder)",
                                     lvlContinue));
 };
 
-
-// Llamada cuando la nave del jugador ha sido alcanzada, para
-// finalizar el juego
 var loseGame = function() {
     Game.setBoard(3,new TitleScreen("You lose!", 
                                     "Press fire to play again",
                                     playGame));
 };
-
-
 
 // Si se construye con clear==true no se pintan estrellas con fondo
 // transparente, sino fondo en negro

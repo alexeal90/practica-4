@@ -130,7 +130,7 @@ var playGame = function() {
     // Se un nuevo nivel al tablero de juego, pasando la definici.n de
     // nivel level1 y la funci.n callback a la que llamar si se ha
     // ganado el juego
-    board.add(new Level(level2, winGame));
+    board.add(new Level(level1, winGame));
     Game.setBoard(3,board);
 };
 
